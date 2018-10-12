@@ -2,8 +2,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using bdNetCoreAPI.Models;
 using bdNetCoreAPIDataTransfer;
+using bdNetCoreAPIDataTransfer.Requests.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +26,7 @@ namespace bdNetCoreAPI.Controllers
         [HttpPost]
         public IActionResult RequestToken0(TokenRequest request)
         {
-            if (request.UserName == "Jon" && request.Password == "Password")
+            if (request.UserName == "Test" && request.Password == "Password")
             {
                 var claims = new[]
                 {
