@@ -24,7 +24,7 @@
         public static class ExampleRoute
         {
             public const string GetExampleItems = "example/getall/";
-            public const string GetExampleItem = "example/get/{0}";
+            public const string GetExampleItem = "example/get/{id}";
             public const string SaveExampleItem = "example/save";
             public const string UpdateExampleItem = "example/update";
             public const string DeleteExampleItem = "example/delete";
