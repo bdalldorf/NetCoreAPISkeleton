@@ -37,8 +37,8 @@ namespace bdNetCoreAPI.Controllers
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
-                    issuer: "yourdomain.com",
-                    audience: "yourdomain.com",
+                    issuer: ApiConstants.ValidIssuer,
+                    audience: ApiConstants.ValidAudience,
                     claims: claims,
                     expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: creds);
