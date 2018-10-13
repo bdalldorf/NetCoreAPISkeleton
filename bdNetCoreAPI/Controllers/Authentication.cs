@@ -24,7 +24,7 @@ namespace bdNetCoreAPI.Controllers
         [AllowAnonymous]
         [Route(ApiRoutes.ApiAuthenticationRoute.PostLoginInformation)]
         [HttpPost]
-        public IActionResult RequestToken0(TokenRequest request)
+        public IActionResult RequestToken(TokenRequest request)
         {
             if (request.UserName == "Test" && request.Password == "Password")
             {
