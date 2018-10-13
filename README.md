@@ -1,2 +1,2 @@
-# bdalldorf-NetCoreAPISkeleton-
+NetCoreAPISkeleton -
 Base NetCore API Project
