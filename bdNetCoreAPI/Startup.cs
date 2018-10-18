@@ -37,7 +37,15 @@ namespace bdNetCoreAPI
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddSingleton<IConfiguration>(Configuration);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin", builder => builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod());
+            });
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -69,6 +77,9 @@ namespace bdNetCoreAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Shows UseCors with named policy.
+            app.UseCors("AllowSpecificOrigin");
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
