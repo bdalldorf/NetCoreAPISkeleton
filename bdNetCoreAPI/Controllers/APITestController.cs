@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using bdNetCoreAPIDataTransfer;
+using bdNetCoreAPIDataTransfer.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bdNetCoreAPI.Controllers
@@ -14,9 +15,14 @@ namespace bdNetCoreAPI.Controllers
     {
         [Route(ApiRoutes.ApiTestRoute.GetApiTestItems)]
         [HttpGet]
-        public IEnumerable<string> Get()
+        public List<ItemModel> GetAll()
         {
-            return new string[] { "List Item 1", "List Item 2" };
+            return new List<ItemModel>
+            {
+                new ItemModel() { ID = 1, ItemName = "Item 1", ItemPrice = 1.50m  },
+                new ItemModel() { ID = 2, ItemName = "Item 2", ItemPrice = 4.50m  },
+                new ItemModel() { ID = 3, ItemName = "Item 3", ItemPrice = 2.75m  },
+            };
         }
 
         [Route(ApiRoutes.ApiTestRoute.GetApiTestItem)]
@@ -28,14 +34,14 @@ namespace bdNetCoreAPI.Controllers
 
         [Route(ApiRoutes.ApiTestRoute.SaveApiTestItem)]
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post()
         {
 
         }
 
         [Route(ApiRoutes.ApiTestRoute.UpdateApiTestItem)]
         [HttpPut]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, string value)
         {
         }
 
