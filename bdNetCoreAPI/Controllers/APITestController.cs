@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using bdNetCoreAPIDataTransfer;
 using bdNetCoreAPIDataTransfer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bdNetCoreAPI.Controllers
@@ -32,11 +33,18 @@ namespace bdNetCoreAPI.Controllers
             return $"Item {id}";
         }
 
+        [AllowAnonymous]
         [Route(ApiRoutes.ApiTestRoute.SaveApiTestItem)]
         [HttpPost]
-        public void Post()
+        public IActionResult Post([FromBody]int id)
         {
+            if (id != 0)
+            {
 
+                return Ok(id);
+            }
+
+            return BadRequest(id);
         }
 
         [Route(ApiRoutes.ApiTestRoute.UpdateApiTestItem)]
