@@ -44,9 +44,13 @@ namespace bdNetCoreAPI.Controllers
                     expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: creds);
 
+                //TODO: Add identity information to the fingerprint (i.e. server info, ect.)
+                var fingerPrint = Guid.NewGuid();
+
                 return Ok(new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token)
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    fingerPrint
                 });
             }
 
