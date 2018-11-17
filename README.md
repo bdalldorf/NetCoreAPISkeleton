@@ -1,4 +1,4 @@
-NetCoreAPISkeleton -
+.Net Core API Skeleton -
 Base .NetCore API Project
 
 - Microsoft ASP.Net Core (2.1.1)
