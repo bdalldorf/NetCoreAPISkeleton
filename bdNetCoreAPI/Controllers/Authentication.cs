@@ -15,6 +15,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace bdNetCoreAPI.Controllers
 {
     [Route("")]
+    [ValidateAntiForgeryToken]
+    [AllowAnonymous]
     [ApiController]
     public class Authentication : Controller
     {
@@ -46,7 +48,6 @@ namespace bdNetCoreAPI.Controllers
             return BadRequest("Could not verify username and password");
         }
 
-        [AllowAnonymous]
         [Route(ApiRoutes.ApiAuthenticationRoute.PostApiLoginInformation)]
         [HttpPost]
         public IActionResult RequestToken([FromBody]TokenRequest request)

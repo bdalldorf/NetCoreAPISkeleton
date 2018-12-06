@@ -63,7 +63,10 @@ namespace bdNetCoreAPI
 
             services.AddAntiforgery(options =>
             {
+                options.FormFieldName = "AntiforgeryFieldname";
                 options.HeaderName = "X-XSRF-TOKEN";
+                options.SuppressXFrameOptionsHeader = false;
+
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
