@@ -1,12 +1,20 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using bdNetCoreAPIDataTransfer;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace bdNetCoreAPI
 {
@@ -21,19 +29,41 @@ namespace bdNetCoreAPI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-             {
-                options.TokenValidationParameters = new TokenValidationParameters
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie(options => {
+                //options.Cookie.Name = "auth_cookie";
+                //options.Cookie.SameSite = SameSiteMode.None;
+                options.Events.OnRedirectToLogin = redirectContext =>
+                    {
+                        //if (!(IsWebRequest(redirectContext.Request) || IsApiRequest(redirectContext.Request)))
+                        //{
+                        //    redirectContext.Response.Redirect(redirectContext.RedirectUri);
+                        //    return Task.CompletedTask;
+                        //}
+                        redirectContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return redirectContext.Response.WriteAsync("Unauthorized");
+                    };
+                }).AddJwtBearer(options =>
                 {
-                    ValidateIssuer = ApiConstants.ValidateIssuer,
-                    ValidateAudience = ApiConstants.ValidateAudience,
-                    ValidateLifetime = ApiConstants.ValidateLifetime,
-                    ValidateIssuerSigningKey = ApiConstants.ValidateIssuerSigningKey,
-                    ValidIssuer = ApiConstants.ValidIssuer,
-                    ValidAudience = ApiConstants.ValidAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(Configuration["SecurityKey"]))
-                };
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = ApiConstants.ValidateIssuer,
+                        ValidateAudience = ApiConstants.ValidateAudience,
+                        ValidateLifetime = ApiConstants.ValidateLifetime,
+                        ValidateIssuerSigningKey = ApiConstants.ValidateIssuerSigningKey,
+                        ValidIssuer = ApiConstants.ValidIssuer,
+                        ValidAudience = ApiConstants.ValidAudience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(Configuration["SecurityKey"]))
+                    };
+                });
+
+            services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "X-XSRF-TOKEN";
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -42,9 +72,10 @@ namespace bdNetCoreAPI
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin", builder => builder.AllowAnyOrigin()
+                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
                 .AllowAnyHeader()
-                .AllowAnyMethod());
+                .AllowAnyMethod()
+                .AllowCredentials());
             });
 
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -71,15 +102,17 @@ namespace bdNetCoreAPI
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IAntiforgery antiforgery, IHostingEnvironment env)
         {
+            app.UseAuthentication();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
             // Shows UseCors with named policy.
-            app.UseCors("AllowSpecificOrigin");
+            app.UseCors("CorsPolicy");
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -92,9 +125,40 @@ namespace bdNetCoreAPI
                 c.RoutePrefix = string.Empty;
             });
 
-            app.UseAuthentication();
+            app.Use(next => context =>
+            {
+                if (
+                    string.Equals(context.Request.Path.Value, "/", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(context.Request.Path.Value, "/index.html", StringComparison.OrdinalIgnoreCase))
+                {
+                    // We can send the request token as a JavaScript-readable cookie, and Angular will use it by default.
+                    var tokens = antiforgery.GetAndStoreTokens(context);
+                    context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken,
+                        new CookieOptions() { HttpOnly = false });
+                }
+
+                return next(context);
+            });
+
+
             app.UseMvc();
             app.UseStaticFiles();
+        }
+
+        private static bool IsWebRequest(HttpRequest request)
+        {
+            var query = request.Query;
+            if ((query != null) && (query["X-Requested-With"] == "XMLHttpRequest"))
+            {
+                return true;
+            }
+            IHeaderDictionary headers = request.Headers;
+            return ((headers != null) && (headers["X-Requested-With"] == "XMLHttpRequest"));
+        }
+
+        private static bool IsApiRequest(HttpRequest request)
+        {
+            return request.Path.StartsWithSegments(new PathString("/api"));
         }
     }
 }

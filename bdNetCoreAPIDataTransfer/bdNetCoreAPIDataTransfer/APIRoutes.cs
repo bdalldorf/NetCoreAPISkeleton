@@ -9,7 +9,8 @@
 
         public static class ApiAuthenticationRoute
         {
-            public const string PostLoginInformation = "authenticate/login";
+            public const string PostWebLoginInformation = "authenticate/web/login";
+            public const string PostApiLoginInformation = "authenticate/api/login";
         }
 
         public static class ApiTestRoute

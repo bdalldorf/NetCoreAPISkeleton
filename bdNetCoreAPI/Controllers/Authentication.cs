@@ -2,8 +2,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using bdNetCoreAPIDataTransfer;
 using bdNetCoreAPIDataTransfer.Requests.Authentication;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -22,8 +25,29 @@ namespace bdNetCoreAPI.Controllers
             _Configuration = Configuration;
         }
 
+        [Route(ApiRoutes.ApiAuthenticationRoute.PostWebLoginInformation)]
+        [HttpPost]
+        public async Task<IActionResult> RequestCookie([FromBody]TokenRequest request)
+        {
+            if (request.UserName == "Test" && request.Password == "Password")
+            {
+                var claims = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Name, request.UserName)
+                }, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var userIdentity = new ClaimsPrincipal(claims);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userIdentity);
+
+                return Redirect("/lessons");
+            }
+
+            return BadRequest("Could not verify username and password");
+        }
+
         [AllowAnonymous]
-        [Route(ApiRoutes.ApiAuthenticationRoute.PostLoginInformation)]
+        [Route(ApiRoutes.ApiAuthenticationRoute.PostApiLoginInformation)]
         [HttpPost]
         public IActionResult RequestToken([FromBody]TokenRequest request)
         {
