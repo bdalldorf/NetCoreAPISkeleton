@@ -130,14 +130,15 @@ namespace bdNetCoreAPI
 
             app.Use(next => context =>
             {
-                if (
-                    string.Equals(context.Request.Path.Value, "/", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(context.Request.Path.Value, "/index.html", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(context.Request.Path.Value, "/authenticate/web/login", StringComparison.OrdinalIgnoreCase))
                 {
-                    // We can send the request token as a JavaScript-readable cookie, and Angular will use it by default.
-                    var tokens = antiforgery.GetAndStoreTokens(context);
-                    context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken,
-                        new CookieOptions() { HttpOnly = false });
+                    AntiforgeryTokenSet AntiforgeryTokenSet = antiforgery.GetAndStoreTokens(context);
+                    CookieOptions CookieOptions = new CookieOptions();
+                    CookieOptions.HttpOnly = false;
+                    CookieOptions.SameSite = SameSiteMode.Strict;
+
+                    context.Response.Cookies.Append("XSRF-TOKEN", AntiforgeryTokenSet.RequestToken,
+                        CookieOptions);
                 }
 
                 return next(context);

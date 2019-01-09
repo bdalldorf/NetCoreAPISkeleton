@@ -14,6 +14,7 @@ namespace bdNetCoreAPI.Controllers
     /// </summary>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [ValidateAntiForgeryToken]
     [Route("")]
     [ApiController]
     public class AttributeRouteController : Controller

@@ -15,7 +15,6 @@ using Microsoft.IdentityModel.Tokens;
 namespace bdNetCoreAPI.Controllers
 {
     [Route("")]
-    [ValidateAntiForgeryToken]
     [AllowAnonymous]
     [ApiController]
     public class Authentication : Controller
