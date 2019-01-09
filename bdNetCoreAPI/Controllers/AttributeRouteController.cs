@@ -25,9 +25,9 @@ namespace bdNetCoreAPI.Controllers
         {
             return new List<ItemModel>
             {
-                new ItemModel() { ID = 1, ItemName = "Item 1", ItemPrice = 1.50m  },
-                new ItemModel() { ID = 2, ItemName = "Item 2", ItemPrice = 4.50m  },
-                new ItemModel() { ID = 3, ItemName = "Item 3", ItemPrice = 2.75m  },
+                new ItemModel() { ID = 1, ItemName = "Lesson Item 1", ItemPrice = 1.50m  },
+                new ItemModel() { ID = 2, ItemName = "Lesson Item 2", ItemPrice = 4.50m  },
+                new ItemModel() { ID = 3, ItemName = "Lesson Item 3", ItemPrice = 2.75m  },
             };
         }
 
