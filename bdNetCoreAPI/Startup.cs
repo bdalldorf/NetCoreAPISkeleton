@@ -44,7 +44,7 @@ namespace bdNetCoreAPI
                         //    return Task.CompletedTask;
                         //}
                         redirectContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        return redirectContext.Response.WriteAsync("Unauthorized");
+                        return Task.CompletedTask;
                     };
                 }).AddJwtBearer(options =>
                 {
@@ -63,7 +63,7 @@ namespace bdNetCoreAPI
 
             services.AddAntiforgery(options =>
             {
-                options.FormFieldName = "AntiforgeryFieldname";
+                //options.FormFieldName = "AntiforgeryFieldname";
                 options.HeaderName = "X-XSRF-TOKEN";
                 options.SuppressXFrameOptionsHeader = false;
 
@@ -130,17 +130,6 @@ namespace bdNetCoreAPI
 
             app.Use(next => context =>
             {
-                if (string.Equals(context.Request.Path.Value, "/authenticate/web/login", StringComparison.OrdinalIgnoreCase))
-                {
-                    AntiforgeryTokenSet AntiforgeryTokenSet = antiforgery.GetAndStoreTokens(context);
-                    CookieOptions CookieOptions = new CookieOptions();
-                    CookieOptions.HttpOnly = false;
-                    CookieOptions.SameSite = SameSiteMode.Strict;
-
-                    context.Response.Cookies.Append("XSRF-TOKEN", AntiforgeryTokenSet.RequestToken,
-                        CookieOptions);
-                }
-
                 return next(context);
             });
 

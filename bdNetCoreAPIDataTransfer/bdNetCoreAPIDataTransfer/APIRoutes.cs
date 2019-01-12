@@ -10,6 +10,8 @@
         public static class ApiAuthenticationRoute
         {
             public const string PostWebLoginInformation = "authenticate/web/login";
+            public const string PostWebLoginAntiForgeryCookie = "authenticate/web/antiforgerycookie";
+            public const string PostWebLogoutInformation = "authenticate/web/logout";
             public const string PostApiLoginInformation = "authenticate/api/login";
         }
 

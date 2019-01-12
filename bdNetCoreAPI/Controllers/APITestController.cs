@@ -10,12 +10,14 @@ namespace bdNetCoreAPI.Controllers
     /// The HttpGet, HttpPost, HttpPut, HttpDelete Attributes aren't necessary for the methods the way I am using the routes.
     /// But if you added a base route to the class Route Attribute they can be used properly.
     /// </summary>
-    [Route("")]
+    [Authorize]
+    [AutoValidateAntiforgeryToken]
     [ApiController]
+    [Route("")]
     public class APITestController : Controller
     {
-        [Route(ApiRoutes.ApiTestRoute.GetApiTestItems)]
         [HttpGet]
+        [Route(ApiRoutes.ApiTestRoute.GetApiTestItems)]
         public List<ItemModel> GetAll()
         {
             return new List<ItemModel>
@@ -26,16 +28,15 @@ namespace bdNetCoreAPI.Controllers
             };
         }
 
-        [Route(ApiRoutes.ApiTestRoute.GetApiTestItem)]
         [HttpGet]
+        [Route(ApiRoutes.ApiTestRoute.GetApiTestItem)]
         public string Get(int id)
         {
             return $"Item {id}";
         }
 
-        [AllowAnonymous]
-        [Route(ApiRoutes.ApiTestRoute.SaveApiTestItem)]
         [HttpPost]
+        [Route(ApiRoutes.ApiTestRoute.SaveApiTestItem)]
         public IActionResult Post([FromBody]int id)
         {
             if (id != 0)
@@ -47,14 +48,14 @@ namespace bdNetCoreAPI.Controllers
             return BadRequest(id);
         }
 
-        [Route(ApiRoutes.ApiTestRoute.UpdateApiTestItem)]
         [HttpPut]
+        [Route(ApiRoutes.ApiTestRoute.UpdateApiTestItem)]
         public void Put(int id, string value)
         {
         }
 
-        [Route(ApiRoutes.ApiTestRoute.DeleteApiTestItem)]
         [HttpDelete]
+        [Route(ApiRoutes.ApiTestRoute.DeleteApiTestItem)]
         public void Delete(int id)
         {
         }
