@@ -36,6 +36,7 @@ namespace bdNetCoreAPI
             }).AddCookie(options => {
                 //options.Cookie.Name = "auth_cookie";
                 options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                 options.Events.OnRedirectToLogin = redirectContext =>
                     {
                         //if (!(IsWebRequest(redirectContext.Request) || IsApiRequest(redirectContext.Request)))
